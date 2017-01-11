@@ -79,13 +79,10 @@ end
 
 
 %regularization
-temp_ttht
+sum_theta1 = Theta1(:,2:end);
+temp_theta2 = Theta2(:,2:end);
 
-J = J + (lambda / (2*m)) * ();
-
-
-
-
+J = J + (lambda / (2*m)) * (sum(temp_theta1 .^ 2) + sum(temp_theta2 .^ 2));
 
 
 
