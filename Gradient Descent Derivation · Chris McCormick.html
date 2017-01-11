@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)http://mccormickml.com/2014/03/04/gradient-descent-derivation/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+    
+      Gradient Descent Derivation · Chris McCormick
+    
+  </title>
+
+  <link rel="stylesheet" href="./Gradient Descent Derivation · Chris McCormick_files/styles.css">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://mccormickml.com/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="http://mccormickml.com/public/favicon.ico">
+  <link rel="alternate" type="application/atom+xml" title="Chris McCormick" href="http://mccormickml.com/atom.xml">
+
+  <!-- Adding support for MathJax -->
+  <script async="" src="http://www.google-analytics.com/analytics.js"></script><script src="./Gradient Descent Derivation · Chris McCormick_files/MathJax.js.download" type="text/javascript"></script>
+
+<script src="./Gradient Descent Derivation · Chris McCormick_files/embed.js.download" data-timestamp="1483303844792"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">
+:root .container > .infoBoxList > .shareInfoBox,
+:root .adsbygoogle
+{ display: none !important; }
+:root *[hhg1ruw][hidden] { display: none !important; }</style><script src="./Gradient Descent Derivation · Chris McCormick_files/alfie.f51946af45e0b561c60f768335c9eb79.js.download" async="" charset="UTF-8"></script></head>
+
+
+  <body><div id="StayFocusd-infobar" style="display: none; top: 0px;">
+    <img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/common/img/eye_19x19_red.png">
+    <span id="StayFocusd-infobar-msg"></span>
+    <span id="StayFocusd-infobar-links">
+        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="StayFocusd-infobar-hide">hide once</a>
+    </span>
+</div><div id="MathJax_Message" style="display: none;"></div>
+
+    <div class="container content">
+      <header class="masthead">
+        <h3 class="masthead-title">
+          <a href="http://mccormickml.com/" title="Home">Chris McCormick</a>
+
+          <!--- Display the About, Archive, etc. pages in the header --->
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="http://mccormickml.com/about/">About</a></small>
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="http://mccormickml.com/tutorials/">Tutorials</a></small>
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="http://mccormickml.com/archive/">Archive</a></small>
+          
+
+        </h3>
+        <!---- I could use this to include the tag line, but it looks cluttered...
+        <h3 class="masthead-title">
+             <small>Machine Learning Tutorials and Insights</small>
+        </h3>
+        ----->
+
+      </header>
+
+      <main>
+        <article class="post">
+  <h1 class="post-title">Gradient Descent Derivation</h1>
+  <time datetime="2014-03-04T01:14:11-08:00" class="post-date">04 Mar 2014</time>
+  <p>Andrew Ng’s <a href="https://www.coursera.org/course/ml">course</a> on Machine Learning at Coursera provides an excellent explanation of gradient descent for linear regression. To really get a strong grasp on it, I decided to work through some of the derivations and some simple examples here.</p>
+
+<p>This material assumes some familiarity with linear regression, and is primarily intended to provide additional insight into the gradient descent technique, not linear regression in general.</p>
+
+<p>I am making use of the same notation as the Coursera course, so it will be most helpful for students of that course.</p>
+
+<p>For linear regression, we have a linear hypothesis function, h(x) =&nbsp;Ѳ0 +&nbsp;Ѳ1*x. We want to find the values of&nbsp;Ѳ0 and&nbsp;Ѳ1 which provide the best fit of our hypothesis to a training set. The training set examples are labeled x, y, where x is the input value and y is the output. The ith training example is labeled as x^(i), y^(i). Do not confuse this as an exponent! It just means that this is the ith training example.</p>
+
+<h3 id="mse-cost-function">MSE Cost Function</h3>
+
+<p>The cost function J for a particular choice of parameters Ѳ is the mean squared error (MSE):</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/mse_cost_eq1.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/mse_cost_eq1.png" alt="MSE_Cost_Eq"></a></p>
+
+<p>Where the variables used are:</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/mse_variable_descriptions.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/mse_variable_descriptions.png" alt="MSE_Variable_Descriptions"></a></p>
+
+<p>The MSE measures the average amount that the model’s predictions vary from the correct values, so you can&nbsp;think of it as a measure of the model’s performance on the training set. The cost is higher when the model is performing poorly on the training set. The objective of the learning algorithm, then, is to find the parameters Ѳ which give the minimum possible cost J.</p>
+
+<p>This minimization objective is expressed using the following notation, which simply states that we want to find the&nbsp;Ѳ which minimizes the cost J(Ѳ).</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/minimize_eq.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/minimize_eq.png" alt="Minimize_Eq"></a></p>
+
+<h3 id="gradient-descent-minimization---single-variable-example">Gradient Descent Minimization - Single Variable Example</h3>
+
+<p>We’re going to be using gradient descent to find&nbsp;Ѳ that minimizes the cost. But let’s forget the MSE cost function for a moment and look at gradient descent as a minimization technique in general.</p>
+
+<p>Let’s take the much simpler function J(Ѳ) = Ѳ^2, and let’s say we want to find the value of Ѳ&nbsp;which minimizes J(Ѳ).</p>
+
+<p>Gradient descent starts with a random value of Ѳ, typically Ѳ = 0, but since Ѳ = 0 is already the minimum of our function Ѳ^2,&nbsp;let’s start with Ѳ&nbsp;= 3.</p>
+
+<p>Gradient descent is an iterative algorithm which we will run many times. On each iteration, we apply the following “update rule” (the := symbol means replace theta with the value computed on the right):</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/gradientdescentupdate.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/gradientdescentupdate.png" alt="GradientDescentUpdate"></a></p>
+
+<p>Alpha is a parameter called the learning rate which we’ll come back to, but for now we’re going to set it to 0.1. The derivative of J(Ѳ) is simply 2Ѳ.</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/exampleterms.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/exampleterms.png" alt="ExampleTerms"></a></p>
+
+<p>Below is a plot of our function, J(Ѳ), and the value of&nbsp;Ѳ over ten iterations of gradient descent.</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/simple2dgradientdescent.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/simple2dgradientdescent.png" alt="Simple2DGradientDescent"></a></p>
+
+<p>Below is a table showing the value of theta prior to each iteration, and the update amounts.</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/gradientdescenttable.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/gradientdescenttable.png" alt="GradientDescentTable"></a></p>
+
+<h3 id="cost-function-derivative">Cost Function Derivative</h3>
+
+<p>Why does gradient descent use the derivative of the cost function? Finding the slope of the cost function at our current Ѳ value tells us two things.</p>
+
+<p>The first is the direction to move theta in. When you look at the plot of a function, a positive slope means the function goes upward as you move right, so we want to move left in order to find the minimum. Similarly, a negative slope means the function goes downard towards the right, so we want to move right to find the minimum.</p>
+
+<p>The second is how big of a step to take. If the slope is large we want to take a large step because we’re far from the minimum. If the slope is small we want to take a smaller step. Note in the example above how gradient descent takes increasingly smaller steps towards the minimum with each iteration.</p>
+
+<h3 id="the-learning-rate---alpha">The Learning Rate - Alpha</h3>
+
+<p>The learning rate gives the engineer some additional control over how large of steps we make.</p>
+
+<p>Selecting the right learning rate is critical. If the learning rate is too large, you can overstep the minimum and even diverge. For example, think through what would happen in the above example if we used a learning rate of 2. Each iteration would take us farther away from the minimum!</p>
+
+<p>The only concern with using too small of a learning rate is that you will need to run more iterations of gradient descent, increasing your training time.</p>
+
+<h3 id="convergence--stopping-gradient-descent">Convergence / Stopping Gradient Descent</h3>
+
+<p>Note in the above example that gradient descent will never actually converge on the minimum,&nbsp;Ѳ = 0. Methods for deciding when to stop gradient descent are beyond my level of expertise, but I can tell you that when gradient descent is used in the assignments in the Coursera course, gradient descent is run for a large, fixed number of iterations (for example, 100 iterations), with no test for convergence.</p>
+
+<h3 id="gradient-descent---multiple-variables-example">Gradient Descent - Multiple Variables Example</h3>
+
+<p>The MSE cost function includes multiple variables, so let’s look at one more simple minimization example before going back to the cost function.</p>
+
+<p>Let’s take the function J(Ѳ) =&nbsp;Ѳ1^2 +&nbsp;Ѳ2^2</p>
+
+<p>When there are multiple variables in the minimization objective, gradient descent defines a separate update rule for each variable. The update rule for&nbsp;Ѳ1 uses the partial derivative of J with respect to&nbsp;Ѳ1. A partial derivative just means that we hold all of the other variables constant–to take the partial derivative with respect to&nbsp;Ѳ1, we just treat&nbsp;Ѳ2 as a constant. The update rules are in the table below, as well as the math for calculating the partial derivatives. Make sure you work through those; I wrote out the derivation to make it easy to follow.</p>
+
+<p><img src="./Gradient Descent Derivation · Chris McCormick_files/TwoVariableUpdate.png" alt=""></p>
+
+<p>Note that when implementing the update rule in software,&nbsp;Ѳ1 and&nbsp;Ѳ2 should not be updated until&nbsp;<em>after</em>&nbsp;you have computed the new values for both of them. Specifically, you don’t want to use the new value of&nbsp;Ѳ1 to calculate the new value of&nbsp;Ѳ2.</p>
+
+<h3 id="gradient-descent-of-mse">Gradient Descent of MSE</h3>
+
+<p>Now that we know how to perform gradient descent on an equation with multiple variables, we can return to looking at gradient descent on our MSE cost function.</p>
+
+<p>The MSE cost function is labeled as equation [1.0] below. Taking the derivative of this equation is a little more tricky. The key thing to remember is that x and y are&nbsp;<em>not</em>&nbsp;variables for the sake of the derivative. Rather, they represent a large set of constants (your training set).&nbsp;So when taking the derivative of the cost function, we’ll treat x and y like we would any other constant.</p>
+
+<p>I’ve written out the derivation below, and I explain each step in detail further down.</p>
+
+<p><img src="./Gradient Descent Derivation · Chris McCormick_files/ThetaZeroDerivation.png" alt=""></p>
+
+<p>To move from equation [1.1] to [1.2], we need to apply two basic derivative rules:</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/scalarmultipleandsumrules.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/scalarmultipleandsumrules.png" alt="ScalarMultipleAndSumRules"></a></p>
+
+<p>Moving from [1.2] to [1.3], we apply both the power rule and the chain rule:</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/powerrule.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/powerrule.png" alt="PowerRule"></a></p>
+
+<p>Finally, to go from [1.3] to [1.4], we must evaluate the partial derivative as follows. Recall again that when taking this partial derivative all letters except&nbsp;Ѳ0 are treated as constants&nbsp;(Ѳ1, x, and y).</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/thetazeroderivativeoferror1.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/thetazeroderivativeoferror1.png" alt="ThetaZeroDerivativeOfError"></a></p>
+
+<p>Equation [1.4] gives us the partial derivative of the MSE cost function with respect to one of the variables, Ѳ0.&nbsp;Now we must also take the partial derivative of the MSE function with respect to&nbsp;Ѳ1. The only difference is in the final step, where we take the partial derivative of the error:</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/thetaonederivativeoferror.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/thetaonederivativeoferror.png" alt="ThetaOneDerivativeOfError"></a></p>
+
+<h3 id="one-half-mean-squared-error">One Half Mean Squared Error</h3>
+
+<p>In Andrew Ng’s Machine Learning course, there is one small modification to this derivation. We multiply our MSE cost function by 1/2 so that when we take the derivative, the 2s cancel out. Multiplying the cost function by a scalar does not affect the location of its minimum, so we can get away with this.</p>
+
+<p>Alternatively, you could think of this as folding the 2 into the learning rate. It makes sense to leave the 1/m term, though, because we want the same learning rate (alpha) to work for different training set sizes (m).</p>
+
+<h3 id="final-update-rules">Final Update Rules</h3>
+
+<p>Altogether, we have the following definition for gradient descent over our cost function.</p>
+
+<p><a href="./Gradient Descent Derivation · Chris McCormick_files/gradientdescentofmsetable.png"><img src="./Gradient Descent Derivation · Chris McCormick_files/gradientdescentofmsetable.png" alt="GradientDescentOfMSETable"></a></p>
+
+<h3 id="training-set-statistics">Training Set Statistics</h3>
+
+<p>Note that each update of the theta variables is averaged over the training set. Every training example suggests its own modification to the theta values, and then we take the average of these suggestions to make our actual update.</p>
+
+<p>This means that the statistics of your training set are being taken into account during the learning process. An outlier training example (or even a mislabeled / corrupted example) is going to have less influence over the final weights because it is one voice versus many.</p>
+
+
+
+  <script async="" src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Responsive Unit - End of Post, Colorful -->
+<ins class="adsbygoogle" style="display:block; display: none !important;" data-ad-client="ca-pub-9176681289361741" data-ad-slot="8514028518" data-ad-format="auto" hhg1ruw="" hidden=""></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+  
+  <div id="disqus_thread"><iframe id="dsq-app1" name="dsq-app1" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Gradient Descent Derivation · Chris McCormick_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 1610px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="indicator-north" name="indicator-north" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 700px !important; border: none !important; overflow: hidden !important; top: 0px !important; min-width: 700px !important; max-width: 700px !important; position: fixed !important; z-index: 2147483646 !important; height: 18px !important; min-height: 18px !important; max-height: 18px !important; display: none !important;" src="./Gradient Descent Derivation · Chris McCormick_files/saved_resource(1).html"></iframe><iframe id="indicator-south" name="indicator-south" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 700px !important; border: none !important; overflow: hidden !important; bottom: 0px !important; min-width: 700px !important; max-width: 700px !important; position: fixed !important; z-index: 2147483646 !important; height: 18px !important; min-height: 18px !important; max-height: 18px !important; display: none !important;" src="./Gradient Descent Derivation · Chris McCormick_files/saved_resource(2).html"></iframe></div>
+  <script>
+  
+      var disqus_config = function () {
+          this.page.url = "http://mccormickml.com/2014/03/04/gradient-descent-derivation/"
+          this.page.identifier = "/2014/03/04/gradient-descent-derivation/"
+      };
+      
+      var disqus_shortname = 'mccormickml';
+      // var disqus_developer = 1; // Comment out when the site is live
+      var disqus_title      = 'Gradient Descent Derivation';
+      
+      (function() {  // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';        
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the &lt;a href="https://disqus.com/?ref_noscript" rel="nofollow"&gt;comments powered by Disqus.&lt;/a&gt;</noscript>
+  
+  
+</article>
+
+
+<aside class="related">
+  <h3>Related posts</h3>
+  <ul class="related-posts">
+    
+      <li>
+        <a href="http://mccormickml.com/2016/11/08/dbscan-clustering/">
+          DBSCAN Clustering
+          <small><time datetime="2016-11-08T22:00:00-08:00">08 Nov 2016</time></small>
+        </a>
+      </li>
+    
+      <li>
+        <a href="http://mccormickml.com/2016/11/04/interpreting-lsi-document-similarity/">
+          Interpreting LSI Document Similarity
+          <small><time datetime="2016-11-04T23:00:00-07:00">04 Nov 2016</time></small>
+        </a>
+      </li>
+    
+      <li>
+        <a href="http://mccormickml.com/2016/04/27/word2vec-resources/">
+          Word2Vec Resources
+          <small><time datetime="2016-04-27T23:00:00-07:00">27 Apr 2016</time></small>
+        </a>
+      </li>
+    
+  </ul>
+</aside>
+
+
+      </main>
+      
+      <footer class="footer">
+        <small>
+          © <time datetime="2016-11-21T16:40:28-08:00">2016</time>. All rights reserved.
+        </small>
+      </footer>
+    </div>
+
+    
+     <script>
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+       ga('create', 'UA-76624103-1', 'auto');
+       ga('send', 'pageview');
+     </script>
+    
+  
+
+<iframe style="display: none;" src="./Gradient Descent Derivation · Chris McCormick_files/saved_resource(3).html"></iframe></body></html>
