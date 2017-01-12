@@ -64,9 +64,14 @@ Theta2_grad = zeros(size(Theta2));
 
 %Calculate output hx
 a1 = [ones(m, 1) X];
-a2 = sigmoid(a1 * Theta1');
-a2 = [ones(m, 1) a2];
-hx = sigmoid(a2 * Theta2');
+
+z2 = a1 * Theta1';
+z2 = [ones(m,1) z2];    %size changed here bc of backpropagation algorithm
+a2 = sigmoid(z2);
+a2(:,1) = 1;         %have to change back to ones
+
+z3 = a2 * Theta2';
+hx = sigmoid(z3);
 
 %calculate cost
 for i = 1:num_labels,
@@ -84,14 +89,28 @@ sum_theta2 = sum(sum(Theta2(:,2:end) .^ 2));
 
 J = J + (lambda / (2*m)) * (sum_theta1 + sum_theta2);
 
+%back propagation
+d3 = zeros(size(hx));
+for i = 1:num_labels,
+    d3(:, i) = hx(:, i) - (y == i);
+end
 
 
+d2 = (d3 * Theta2) .* sigmoidGradient(z2);
+d2 = d2(:,2:end); 
 
+D2 = d3' * a2;
+D1 = d2' * a1;
 
+Theta2_grad = D2 ./ m;
+Theta2_reg = (lambda / m) .* Theta2;
+Theta2_reg(: , 1) = 0;
+Theta2_grad = Theta2_grad + Theta2_reg;
 
-
-
-
+Theta1_grad = D1 ./ m;
+Theta1_reg = (lambda / m) .* Theta1;
+Theta1_reg(: , 1) = 0;
+Theta1_grad = Theta1_grad + Theta1_reg;
 % -------------------------------------------------------------
 
 % =========================================================================
