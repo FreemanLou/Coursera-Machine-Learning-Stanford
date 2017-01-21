@@ -47,12 +47,10 @@ x = zeros(n, 1);
 %              x = [ 0 0 0 0 1 0 0 0 ... 0 0 0 0 1 ... 0 0 0 1 0 ..];
 %
 %
-
-
-
-
-
-
+for idx = 1 : size(word_indices)
+    dictionary_idx = word_indices(idx);
+    x(dictionary_idx) = 1;
+end
 
 
 % =========================================================================
